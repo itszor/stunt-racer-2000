@@ -1,0 +1,31 @@
+# Python / editors
+__pycache__/
+*.pyc
+*.swp
+
+# Derived: the CLOAD files unpacked by the game's DeComp (tools/images.py unpack)
+unpacked/
+
+# Tools built, and their run outputs
+tools/cload
+tools/recomp.*
+
+# Analysis outputs (tools/images.py analyse): the BASIC's CALL targets are
+# recomputed each time; core.roots (gap entries) is kept
+analysis/*.json
+analysis/all.roots
+analysis/calls.roots
+
+# Recompilation: generated C (gen/, basic.c from bas2c.py), objects,
+# binaries, run outputs
+recomp/gen/
+recomp/basic.c
+recomp/*.o
+recomp/stuntracer
+recomp/recomp.*
+recomp/*.log
+recomp/run.txt
+recomp/screenshot-*.bmp
+recomp/*.wav
+recomp/savedata/
+recomp/untranslated.log
