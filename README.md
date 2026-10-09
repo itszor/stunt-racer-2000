@@ -35,6 +35,17 @@ The polygon plotter dispatches through a table of tables of span plotters
 (about 2,500 entry points) and the scenery through handlers in objects a
 table points to; SuperSpider resolves both (its tables mechanism).
 
-Status: headless, it runs the 3D attract mode: 3 billion instructions in
-about 13s, all but about 90,000 of them translated (five data words the
-code falls through, and self-modified words). Not yet tried interactively.
+Status: the front end (menus, icons, the game's own character set), the
+practice race (driving with the keys, the dashboard) and the attract demo
+run, all translated but for a few words. Not yet played interactively.
+
+Keys (one player): Z left, X right, ' accelerate, / brake, Return nitro,
+Space mega-boost, Escape quits. A headless scenario that starts a
+practice race and drives (screenshots as screenshot-N.bmp):
+
+    ./stuntracer --limit=3e8 --full-os --script=20000:click:340:660,20300:release,\
+    26000:click:928:100,26300:release,40000:key:80:60000,50000:shot,90000:shot
+
+Open: text drawn over the attract demo is garbled (the same interpreted,
+so it's something libroger doesn't do yet, not the translation); the RAM
+disc (2MB mode: the music) isn't there; Intro.Intro isn't translated.
