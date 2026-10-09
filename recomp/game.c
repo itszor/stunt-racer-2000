@@ -87,12 +87,21 @@ static int game_swi(uint32_t n, int x)
  * assembler). The promo picture is CLOADed into screen bank 1 while bank 2
  * shows TV static (fuzzy%, with the Fuzz voice hissing); the picture fades
  * in through the static, jittering, and is shown while the game loads.
- * (With 476K of RAM disc it also loads and starts the music: there's no RAM
- * disc here.) Its blocks are at &7F000, clear of the BASIC heap, so that
+ * With 476K of RAM disc free (the 2MB mode) it loads ExSound and its
+ * tune, and starts the music as the picture appears. Its blocks are at &7F000, clear of the BASIC heap, so that
  * the game's DIMs land where its translation expects. */
 #define INTRO_OFF  0x7F000u                      /* off%: OS_Word 22's block */
 #define INTRO_VDU  0x7F010u                      /* bl%: OS_ReadVduVariables */
 #define INTRO_PTR  0x7F020u                      /* b%: the pointer shape (Code.Ptr) */
+#define INTRO_STR  0x7F200u                      /* a string for a SWI */
+
+static void swi_s(const char *swi, const char *arg)   /* SYS swi, "arg" */
+{
+    uint32_t n = swi_number(swi);
+    snprintf((char *)MEM + INTRO_STR, 256, "%s", arg);
+    R[0] = INTRO_STR;
+    roger_swi(n | 0x20000);
+}
 
 static uint32_t r1 = 1023, r2 = 1023;            /* fuzzy%'s random numbers */
 
@@ -158,7 +167,20 @@ static void intro(void)
     oscli_c("RMLoad <SR2000$Dir>.Code.Sounds.Fuzz");
     colour_rgb(3, 0, 0, 0); colour_rgb(1, 196, 196, 196); colour_rgb(2, 96, 96, 96); colour_rgb(0, 255, 255, 255);
     bl += 40960;                                 /* bank 2, where the static goes */
+    int xtrameg = 0;                             /* the 2MB mode: a RAM disc with 476K free */
+    roger_swi(0x55);                             /* OS_ReadRAMFsLimits */
+    if (R[1] > R[0]) {
+        swi_s("RamFS_FreeSpace", "0");
+        xtrameg = R[0] >= 476 * 1024;
+    }
     oscli_c("VOLUME 1");
+    if (xtrameg) {
+        oscli_c("RMLOAD <SR2000$Dir>.Code.ExSound");
+        oscli_c("SoundRmaSize 163840"); oscli_c("MusicRmaSize 12288");
+        oscli_c("SET Sounds$Dir <SR2000$Dir>.Intro");
+        swi_s("ExS_MusicLoad", "<SR2000$Dir>.Intro.Start");
+        roger_swi(swi_number("ExS_MusicStop") | 0x20000);
+    }
     voices(1); oscli_c("CHANNELVOICE 1 Fuzz");
     bank(113, 2); sound_on(1);
     snprintf(cmd, sizeof cmd, "VOLUME %d", 105 - maxvol); oscli_c(cmd);
@@ -184,6 +206,15 @@ static void intro(void)
     fuzzy(bl, 8); wait_();
     bank(113, 1);                                /* the picture */
     oscli_c("RMKILL Fuzz"); vdu(6, -1);
+    if (xtrameg) {                               /* the music, on four ExtensionMod voices */
+        oscli_c("VOLUME 1"); voices(4);
+        for (int c = 1; c <= 4; c++) {
+            snprintf(cmd, sizeof cmd, "CHANNELVOICE %d ExtensionMod", c); oscli_c(cmd);
+            sound(c, -1, 0, 0);
+        }
+        snprintf(cmd, sizeof cmd, "VOLUME %d", 127 - maxvol); oscli_c(cmd);
+        roger_swi(swi_number("ExS_MusicStart") | 0x20000);
+    }
 }
 
 static void init(void)
@@ -204,6 +235,8 @@ static struct roger_config config = {
     .variables = variables,
     .initial_mode = 13,
     .wimpslot = 2048 * 1024,
+    .ramfs_size = 0x78000,                       /* the RAM disc Code.CDA2Mg leaves on a 2MB
+                                                    machine: the "2Mb mode" (music, pictures) */
     .interpret_gaps = 1,
     .init = init,
     .swi = game_swi,

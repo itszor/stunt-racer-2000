@@ -56,6 +56,11 @@ practice race and drives (screenshots as screenshot-N.bmp):
     ./stuntracer --limit=3e8 --full-os --script=20000:click:340:660,20300:release,\
     26000:click:928:100,26300:release,40000:key:80:60000,50000:shot,90000:shot
 
-Open: text drawn over the attract demo is garbled (the same interpreted,
-so it's something libroger doesn't do yet, not the translation); the RAM
-disc (2MB mode: the music) isn't there.
+The 2MB mode is on: game.c gives libroger a 480K RAM disc, as
+Code.CDA2Mg leaves on a 2MB machine, so the intro plays its tune and the
+game copies its pictures, music and notes there and plays music in the
+menus (Configure: Menu Music, Driving Music).
+
+Settings are saved in recomp/savedata (Code.Config): a run before the RAM
+disc existed saved the 1MB mode's settings (no menu music) there - delete
+savedata/!SR2000/Code/Config, or turn Menu Music on in Configure.
