@@ -1,1 +1,10 @@
 # gap entries from --trace-gaps runs (images.py roots)
+&5bf5c	# gap entry, from pc=&5bf58 LR=&fff95e96
+&61058	# gap entry, from pc=&5b204 LR=&2005b208
+&610a0	# gap entry, from pc=&61058 LR=&2005b208
+&63fac	# gap entry, from pc=&61790 LR=&6005b208
+&64efc	# gap entry, from pc=&61798 LR=&2005b208
+&65e4c	# gap entry, from pc=&617a0 LR=&2005b208
+&66d9c	# gap entry, from pc=&617a8 LR=&2005b208
+&67cec	# gap entry, from pc=&617b0 LR=&2005b208
+&70af4	# gap entry, from pc=&74a98 LR=&eeeeeeee

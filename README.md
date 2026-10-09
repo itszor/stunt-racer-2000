@@ -23,9 +23,18 @@ from &8F00 to &75C9C) and CALLs entry points in it from Control's and
 Code's address tables. The BASIC is translated to C by $SS/tools/bas2c.py
 (recomp/basic.c, on the runtime in recomp/bas.c); the machine code is
 analysed and translated as one image (the BASIC's CALL targets are its
-roots). recomp/game.c is the libroger configuration: disc names
-(OS_GBPB 5), Read_Disc, the one assembler patch the BASIC makes, and the
-modules (DeComp, ReadDisc, RTFM, ExSound, the sound effects), which are
-interpreted for now.
+roots). The modules (DeComp, ReadDisc, RTFM, ExSound, the sound effects)
+are translated at their own RMA addresses, and Code.SUtil, which the BASIC
+*LOADs into a DIMmed block and CALLs, as an overlay at that block's
+address. recomp/game.c is the libroger configuration: disc names
+(OS_GBPB 5), Read_Disc, the one assembler patch the BASIC makes, the
+modules and the overlay. The core image is also loaded up front (see
+game.c), so the CLOADs leave the translated code in place.
 
-Status: headless, it runs to the title picture.
+The polygon plotter dispatches through a table of tables of span plotters
+(about 2,500 entry points) and the scenery through handlers in objects a
+table points to; SuperSpider resolves both (its tables mechanism).
+
+Status: headless, it runs the 3D attract mode: 3 billion instructions in
+about 13s, all but about 90,000 of them translated (five data words the
+code falls through, and self-modified words). Not yet tried interactively.

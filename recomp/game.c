@@ -17,24 +17,11 @@
  * &8F00-&75C9C: the BASIC's PAGE and heap are above it.) */
 extern const struct roger_image recomp_image;
 
-#define MB(k) 0x1840000u + (k) * 0x10000u
-#define IMG(k) {MB(k), MB(k) + 0x10000u, NULL, 0, nomod[k], 'a' + (k)}
-#define MOD(name, k) {"../game/!SR2000/Code/" name, &modimg[k], 1}
-static uint8_t nomod[17][0x10000 / 32];
-static struct roger_image modimg[17] = {IMG(0), IMG(1), IMG(2), IMG(3), IMG(4), IMG(5), IMG(6), IMG(7), IMG(8),
-                                        IMG(9), IMG(10), IMG(11), IMG(12), IMG(13), IMG(14), IMG(15), IMG(16)};
-static struct roger_module modules[] = {
-    MOD("DeComp,fffffa45-00000000", 0), MOD("ReadDisc,fffffa47-00000000", 1),
-    MOD("RTFM,fffffa45-00000000", 2), MOD("ExSound,fffffa45-00000000", 3),
-    MOD("Sounds/Mod2,fffffa45-00000000", 4), MOD("Sounds/Engine,fffffa45-00000000", 5),
-    MOD("Sounds/ExplodeMD2,fffffa45-00000000", 6), MOD("Sounds/CheckPt,fffffa45-00000000", 7),
-    MOD("Sounds/Lap,fffffa45-00000000", 8), MOD("Sounds/Start,fffffa45-00000000", 9),
-    MOD("Sounds/Finished,fffffa45-00000000", 10), MOD("Sounds/BottomOut,fffffa45-00000000", 11),
-    MOD("Sounds/SCrash,fffffa45-00000000", 12), MOD("Sounds/grass_skid,fffffa45-00000000", 13),
-    MOD("Sounds/Transport,fffffa45-00000000", 14), MOD("Sounds/Zoom,fffffa45-00000000", 15),
-    MOD("Sounds/Fuzz,fffffa45-00000000", 16),
-    {NULL, NULL, 0},
-};
+#include "gen/modules.inc"      /* DeComp, ReadDisc, RTFM, ExSound, the sounds */
+
+/* Code.SUtil, which the BASIC *LOADs into a DIMmed block and CALLs */
+extern const struct roger_image recomp_sutil_image;
+static const struct roger_program programs[] = {{"SUtil", &recomp_sutil_image, 1}, {NULL, NULL, 0}};
 
 static const char *const prefixes[] = {
     "adfs::StuntR1.$.", "adfs::StuntR2.$.", "<Obey$Dir>.",
@@ -89,6 +76,7 @@ static struct roger_config config = {
     .image_path = "../unpacked/core",
     .image = &recomp_image,
     .modules = modules,
+    .programs = programs,
     .appdir = "../game",
     .dir_prefixes = prefixes,
     .variables = variables,

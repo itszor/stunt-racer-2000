@@ -6,7 +6,7 @@ ROGER   ?= $(HOME)/stuff/libroger
 SS      ?= $(HOME)/stuff/superspider
 CC      ?= gcc
 CFLAGS  ?= -O2 -g -w -fno-strict-aliasing $(if $(TRACE),-DRECOMP_TRACE)
-GEN     := $(wildcard gen/code*.c) $(wildcard gen/entries.c)
+GEN     := $(wildcard gen/*/code*.c) $(wildcard gen/*/entries.c)
 OBJ     := $(GEN:.c=.o) basic.o bas.o game.o
 LIBS    := $(shell pkg-config --libs sdl3) -lm -lpthread
 INC     := -I$(ROGER)/include
@@ -18,7 +18,7 @@ stuntracer: $(OBJ) $(ROGER)/libroger.a
 $(ROGER)/libroger.a: FORCE
 	$(MAKE) -C $(ROGER) libroger.a
 
-gen/%.o: gen/%.c $(ROGER)/include/roger_cpu.h gen/gen.h
+gen/%.o: gen/%.c $(ROGER)/include/roger_cpu.h
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 basic.c: $(PROG) $(SS)/tools/bas2c.py
@@ -39,3 +39,5 @@ clean:
 	rm -f gen/*.o *.o stuntracer
 
 .PHONY: FORCE regen roots clean
+
+game.o: gen/modules.inc
