@@ -35,9 +35,16 @@ The polygon plotter dispatches through a table of tables of span plotters
 (about 2,500 entry points) and the scenery through handlers in objects a
 table points to; SuperSpider resolves both (its tables mechanism).
 
-Status: the front end (menus, icons, the game's own character set), the
-practice race (driving with the keys, the dashboard) and the attract demo
-run, all translated but for a few words. Not yet played interactively.
+Intro.Intro (the Fednet splash: TV static, then the WFE licence card) is
+translated by hand in game.c; the main program is basic.c.
+
+The race draws at most 10 frames a second (it waits for the vsync counter,
+OS_Byte 176, between frames) and counts 0.1s of race time a frame, so it
+runs at the right speed on any host fast enough for 10 frames a second.
+
+Status: the intro, the front end (menus, logo, icons, the game's own
+character set), the practice race (driving with the keys, the dashboard)
+and the attract demo run, all translated but for a few words.
 
 Keys (one player): Z left, X right, ' accelerate, / brake, Return nitro,
 Space mega-boost, Escape quits. A headless scenario that starts a
@@ -48,4 +55,4 @@ practice race and drives (screenshots as screenshot-N.bmp):
 
 Open: text drawn over the attract demo is garbled (the same interpreted,
 so it's something libroger doesn't do yet, not the translation); the RAM
-disc (2MB mode: the music) isn't there; Intro.Intro isn't translated.
+disc (2MB mode: the music) isn't there.
