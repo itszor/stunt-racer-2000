@@ -7,6 +7,7 @@
  * CLOADs its machine code (gen/, the core image from &8F00) and CALLs it.
  * Both discs are merged into ../game/!SR2000. */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "bas.h"
 
@@ -46,9 +47,27 @@ void bas_asm(const char *text)
  * Yes - both discs are in ../game. OS_GBPB 5 (the disc's name): the one
  * the BASIC is asking for, from L% as FNda works it out - StuntR1,
  * StuntR2, or a track series disc StuntR2-n (L% 12-19). */
+/* The race's frame limit: between frames it sets the vsync counter
+ * (OS_Byte 176) to 5 and waits for it to run out - 5 vsyncs, 10 frames a
+ * second - and counts 0.1s of race time a frame. The original is reported
+ * to run at 12.5 frames a second (4 vsyncs; RISC OS's counter, or the
+ * machines it ran on, must differ from the plain count-down libroger
+ * implements), so the 5 becomes frame_vsyncs: 4 by default,
+ * --frame-vsyncs=N to change it (5: as the code says). */
+static int frame_vsyncs = 4;
+
+static int game_arg(const char *a)
+{
+    if (strncmp(a, "--frame-vsyncs=", 15)) return 0;
+    frame_vsyncs = atoi(a + 15);
+    if (frame_vsyncs < 1) frame_vsyncs = 1;
+    return 1;
+}
+
 static int game_swi(uint32_t n, int x)
 {
     extern int32_t L_I;
+    if (n == 0x06 && R[0] == 176 && R[1] == 5 && R[2] == 0) R[1] = frame_vsyncs;   /* (then as usual) */
     if (n == 0xB8500) { R[0] = (uint32_t)TRUE; return 1; }
     if (n == 0x0C && R[0] == 5) {
         char name[16];
@@ -188,6 +207,8 @@ static struct roger_config config = {
     .interpret_gaps = 1,
     .init = init,
     .swi = game_swi,
+    .arg = game_arg,
+    .usage = "  --frame-vsyncs=N  the race's frame time in vsyncs (default 4: 12.5 frames a second)\n",
 };
 
 int main(int argc, char **argv) { roger_main(argc, argv, &config); }

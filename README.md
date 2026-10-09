@@ -38,9 +38,12 @@ table points to; SuperSpider resolves both (its tables mechanism).
 Intro.Intro (the Fednet splash: TV static, then the WFE licence card) is
 translated by hand in game.c; the main program is basic.c.
 
-The race draws at most 10 frames a second (it waits for the vsync counter,
-OS_Byte 176, between frames) and counts 0.1s of race time a frame, so it
-runs at the right speed on any host fast enough for 10 frames a second.
+The race paces itself: between frames it sets the vsync counter (OS_Byte
+176) to 5 and waits for it to run out, and it counts 0.1s of race time a
+frame. As written that's 10 frames a second; the original is reported to
+run at 12.5, so game.c makes the wait 4 vsyncs (--frame-vsyncs=N to
+change it; 5 gives 10 frames a second). The race clock then gains 1.25s a
+second, as it would have on the original.
 
 Status: the intro, the front end (menus, logo, icons, the game's own
 character set), the practice race (driving with the keys, the dashboard)
