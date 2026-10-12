@@ -6,9 +6,20 @@ and `(Disk 2 of 2).adf`, the later, unprotected release (1.01, 1997, RiscPC
 and StrongARM compatible - readme.txt). `Stunt Racer (19xx)(-)(Disk 2 of
 2).adf` is a played copy, one track short: not used.
 
-    extracted/disc1, disc2   $SS/tools/adf_extract.py's output ($SS = ~/stuff/superspider)
+A recipe: this repository holds no game data. It rebuilds the game from
+your own copy, recognised by content (recipe.json):
+
+    ./build.sh "Stunt Racer 2000 (1993) (The Fourth Dimension).zip"     (or the two .adf files)
+    cd recomp && ./stuntracer
+
+build.sh runs recipe.json's steps with SuperSpider's tools/weave.py
+(~/stuff/superspider, or $SUPERSPIDER; $SS below): it extracts the discs,
+merges their !SR2000 into game/, detokenises the BASIC, unpacks, analyses
+and translates the code, and links. Needs python3, OCaml/dune, gcc and SDL3.
+
+    extracted/disc1, disc2   $SS/tools/adf_extract.py's output, via weave.py
     game/!SR2000             both discs merged: libroger's appdir (../game)
-    basic/                   the BASIC programs, detokenised ($SS/tools/detok.py)
+    basic/                   the BASIC programs, detokenised (make basic in recomp/)
     tools/cload.c            the DeComp module run by libroger: unpacks the CLOAD files
     tools/images.py          unpack (-> unpacked/, assembled into unpacked/core: the
                              memory from &8F00 as the BASIC lays the blobs out),

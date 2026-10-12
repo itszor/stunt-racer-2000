@@ -31,6 +31,13 @@ basic.c: $(PROG) $(SS)/tools/bas2c.py
 regen:
 	python3 ../tools/images.py unpack analyse gen
 
+# make basic: the BASIC programs, detokenised into ../basic, to read
+# (basic.c is the main one translated; game.c has Intro by hand)
+basic:
+	mkdir -p ../basic
+	for p in Code/3d_data:3d_data Intro/Intro:Intro !Runimage:Runimage; do \
+	    python3 -I $(SS)/tools/detok.py "$$(ls ../game/!SR2000/$${p%%:*},* | head -1)" > "../basic/$${p##*:}.bas"; done
+
 LOG ?= untranslated.log
 roots:
 	python3 ../tools/images.py roots $(LOG)
@@ -38,6 +45,6 @@ roots:
 clean:
 	rm -f gen/*.o *.o stuntracer
 
-.PHONY: FORCE regen roots clean
+.PHONY: basic FORCE regen roots clean
 
 game.o: gen/modules.inc
