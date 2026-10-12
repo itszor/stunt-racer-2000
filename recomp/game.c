@@ -230,6 +230,9 @@ static struct roger_config config = {
      * down or the left trigger brake (/), X nitro (Return), Y mega-boost
      * (Space) */
     .pad_map = "left=Z,right=X,up=',down=/,a=',b=/,rt=',lt=/,x=Return,y=Space",
+    /* the controllers as the joystick, if one is connected: Joystick_Read or
+     * the RTFM module's Joy_Read0/1, as its options choose */
+    .joystick = ROGER_JOY_ACORN | ROGER_JOY_KM,
     .image_path = "../unpacked/core",
     .image = &recomp_image,
     .modules = modules,
