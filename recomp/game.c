@@ -226,6 +226,10 @@ static void init(void)
 
 static struct roger_config config = {
     .title = "Stunt Racer 2000 (recompiled)",
+    /* a controller: Z X steer, A, up or the right trigger accelerate ('), B,
+     * down or the left trigger brake (/), X nitro (Return), Y mega-boost
+     * (Space) */
+    .pad_map = "left=Z,right=X,up=',down=/,a=',b=/,rt=',lt=/,x=Return,y=Space",
     .image_path = "../unpacked/core",
     .image = &recomp_image,
     .modules = modules,
