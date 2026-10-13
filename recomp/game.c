@@ -68,7 +68,7 @@ static int game_swi(uint32_t n, int x)
 {
     extern int32_t L_I;
     if (n == 0x06 && R[0] == 176 && R[1] == 5 && R[2] == 0) R[1] = frame_vsyncs;   /* (then as usual) */
-    if (n == 0xB8500) { R[0] = (uint32_t)TRUE; return 1; }
+    if ((n | 0x20000) == 0xB8500) { R[0] = (uint32_t)TRUE; return 1; }   /* (its number has bit 17, the X bit, set) */
     if (n == 0x0C && R[0] == 5) {
         char name[16];
         int l = L_I;
