@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bas.h"
+#include "basic_runtime.h"
 
 /* the core image's translation (make regen). The image itself (the
  * blobs as the BASIC CLOADs them, ../unpacked/core) is loaded up front too:
@@ -19,6 +19,11 @@
 extern const struct roger_image recomp_image;
 
 #include "gen/modules.inc"      /* DeComp, ReadDisc, RTFM, ExSound, the sounds */
+
+/* the BASIC runtime ($SS/runtime/basic_runtime.c): PAGE=508500 (Intro), and
+ * the heap above the program (PAGE + its 80778 bytes) */
+int32_t bas_page = 0x7C254;
+uint32_t bas_lomem = 0x8FD60;
 
 /* Code.SUtil, which the BASIC *LOADs into a DIMmed block and CALLs */
 extern const struct roger_image recomp_sutil_image;
@@ -219,6 +224,7 @@ static void intro(void)
 
 static void init(void)
 {
+    bas_dim_clear = 1;                           /* (as this port always has) */
     intro();
     bas_main();                                  /* PAGE=508500: CHAIN "...code.3d_data" */
     roger_finish("program ended");

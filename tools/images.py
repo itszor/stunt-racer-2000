@@ -46,7 +46,7 @@ MODULES = ['DeComp,fffffa45-00000000', 'ReadDisc,fffffa47-00000000', 'RTFM,fffff
 CODE = os.path.join(TOP, 'game', '!SR2000', 'Code')
 
 # Code.SUtil: 176 bytes the BASIC *LOADs into ka% (DIM ka% 176, the second
-# block in the heap: recomp/bas.c's heap starts at &8FD60, after DIM ga% 8,
+# block in the heap: the BASIC runtime's heap (bas_lomem, recomp/game.c) starts at &8FD60, after DIM ga% 8,
 # which takes 9 bytes) and CALLs. Translated for that address, an overlay
 # in game.c.
 SUTIL = ('SUtil,fffffd45-00000000', 0x8FD6C)

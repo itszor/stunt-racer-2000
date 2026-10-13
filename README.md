@@ -32,7 +32,8 @@ The game is a BBC BASIC program, Code.3d_data, which CLOADs its machine
 code (Poly_Code, Code, DashBd1/2, Car_Code, Control, Messages - back to back
 from &8F00 to &75C9C) and CALLs entry points in it from Control's and
 Code's address tables. The BASIC is translated to C by $SS/tools/bas2c.py
-(recomp/basic.c, on the runtime in recomp/bas.c); the machine code is
+(recomp/basic.c, on SuperSpider's BASIC runtime, $SS/runtime/basic_runtime.c,
+its PAGE and heap in game.c); the machine code is
 analysed and translated as one image (the BASIC's CALL targets are its
 roots). The modules (DeComp, ReadDisc, RTFM, ExSound, the sound effects)
 are translated at their own RMA addresses, and Code.SUtil, which the BASIC
