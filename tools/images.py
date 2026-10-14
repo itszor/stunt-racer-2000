@@ -39,8 +39,7 @@ CODE_CALLS = [56, 72, 80, 84]
 # The modules !Run3 and the BASIC load (in game/!SR2000/Code), in game.c's
 # order, each translated for its own 64K slot in the RMA from &1840000.
 # They are loaded when the program asks for them (on demand).
-MODULES = ['DeComp,fffffa45-00000000', 'ReadDisc,fffffa47-00000000', 'RTFM,fffffa45-00000000',
-           'ExSound,fffffa45-00000000'] + ['Sounds/%s,fffffa45-00000000' % n for n in
+MODULES = ['DeComp', 'ReadDisc', 'RTFM', 'ExSound'] + ['Sounds/' + n for n in
            ['Mod2', 'Engine', 'ExplodeMD2', 'CheckPt', 'Lap', 'Start', 'Finished', 'BottomOut',
             'SCrash', 'grass_skid', 'Transport', 'Zoom', 'Fuzz']]
 CODE = os.path.join(TOP, 'game', '!SR2000', 'Code')
@@ -49,12 +48,21 @@ CODE = os.path.join(TOP, 'game', '!SR2000', 'Code')
 # block in the heap: the BASIC runtime's heap (bas_lomem, recomp/game.c) starts at &8FD60, after DIM ga% 8,
 # which takes 9 bytes) and CALLs. Translated for that address, an overlay
 # in game.c.
-SUTIL = ('SUtil,fffffd45-00000000', 0x8FD6C)
+SUTIL = ('SUtil', 0x8FD6C)
+
+
+def named(rel):
+    """the file rel (in game/!SR2000/Code) with its ',load-exec' suffix"""
+    d, leaf = os.path.split(rel)
+    for f in os.listdir(os.path.join(CODE, d)):
+        if f.split(',')[0] == leaf:
+            return os.path.join(d, f)
+    raise SystemExit('not found: ' + rel)
 
 
 def modules():
     """(name, path relative to game/!SR2000/Code, base)"""
-    return [(m.split('/')[-1].split(',')[0].lower(), m, 0x1840000 + k * 0x10000) for k, m in enumerate(MODULES)]
+    return [(m.split('/')[-1].lower(), named(m), 0x1840000 + k * 0x10000) for k, m in enumerate(MODULES)]
 
 
 def run(cmd):
@@ -107,7 +115,7 @@ def analyse():
     subprocess.run(['dune', 'build'], cwd=SS, check=True)
     run([SSBIN, 'analyse', os.path.join(UNP, 'core'), '%x' % BASE, '--full', '--roots', merged,
          '-o', os.path.join(AN, 'core.json')])
-    run([SSBIN, 'analyse', os.path.join(CODE, SUTIL[0]), '%x' % SUTIL[1], '--full',
+    run([SSBIN, 'analyse', os.path.join(CODE, named(SUTIL[0])), '%x' % SUTIL[1], '--full',
          '-o', os.path.join(AN, 'sutil.json')])
     for name, path, base in modules():
         rf = os.path.join(AN, name + '.roots')
@@ -119,7 +127,7 @@ def gen():
     rc = os.path.join(TOP, 'recomp')
     run([SSBIN, 'gen', os.path.join(UNP, 'core'), '%x' % BASE, os.path.join(AN, 'core.json'),
          '--c', os.path.join(rc, 'gen', 'core')])
-    run([SSBIN, 'gen', os.path.join(CODE, SUTIL[0]), '%x' % SUTIL[1], os.path.join(AN, 'sutil.json'),
+    run([SSBIN, 'gen', os.path.join(CODE, named(SUTIL[0])), '%x' % SUTIL[1], os.path.join(AN, 'sutil.json'),
          '--c', os.path.join(rc, 'gen', 'sutil'), '--prefix', 'S', '--tabprefix', 'recomp_sutil', '--files', '1'])
     for k, (name, path, base) in enumerate(modules()):
         run([SSBIN, 'gen', os.path.join(CODE, path), '%x' % base, os.path.join(AN, name + '.json'),

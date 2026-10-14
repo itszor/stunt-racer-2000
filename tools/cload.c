@@ -12,7 +12,7 @@
 #include <string.h>
 #include <roger.h>
 
-#define DECOMP "../extracted/disc1/!SR2000/Code/DeComp,fffffa45-00000000"
+#define DECOMP "../extracted/disc1/!SR2000/Code/DeComp,fffffa45-ba1edb41"
 #define MODBASE 0x1800000u
 
 static uint8_t nocode[0x80000 / 32], nomod[0x1000 / 32];

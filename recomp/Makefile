@@ -10,7 +10,7 @@ GEN     := $(wildcard gen/*/code*.c) $(wildcard gen/*/entries.c)
 OBJ     := $(GEN:.c=.o) basic.o basic_runtime.o game.o
 LIBS    := $(shell pkg-config --libs sdl3) -lm -lpthread
 INC     := -I$(ROGER)/include
-PROG    := ../extracted/disc1/!SR2000/Code/3d_data,fffffd45-00000000
+PROG    := ../extracted/disc1/!SR2000/Code/3d_data,fffffd45-ba1eda72
 
 stuntracer: $(OBJ) $(ROGER)/libroger.a
 	$(CC) $(CFLAGS) -o $@ $(OBJ) $(ROGER)/libroger.a $(LIBS)
